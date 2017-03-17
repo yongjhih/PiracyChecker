@@ -12,10 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 
-import com.github.javiersantos.licensing.AESObfuscator;
-import com.github.javiersantos.licensing.LibraryChecker;
-import com.github.javiersantos.licensing.LibraryCheckerCallback;
-import com.github.javiersantos.licensing.ServerManagedPolicy;
+
+import com.google.android.vending.licensing.AESObfuscator;
+import com.google.android.vending.licensing.LicenseChecker;
+import com.google.android.vending.licensing.LicenseCheckerCallback;
+import com.google.android.vending.licensing.ServerManagedPolicy;
 import com.github.javiersantos.piracychecker.activities.LicenseActivity;
 import com.github.javiersantos.piracychecker.enums.Display;
 import com.github.javiersantos.piracychecker.enums.InstallerID;
@@ -244,10 +245,10 @@ public class PiracyChecker {
             if (enableLVL) {
                 String deviceId = Settings.Secure.getString(context.getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                LibraryChecker libraryChecker = new LibraryChecker(context, new
+                LicenseChecker libraryChecker = new LicenseChecker(context, new
                         ServerManagedPolicy(context, new AESObfuscator(LibraryUtils.SALT, context
                         .getPackageName(), deviceId)), licenseBase64);
-                libraryChecker.checkAccess(new LibraryCheckerCallback() {
+                libraryChecker.checkAccess(new LicenseCheckerCallback() {
                     @Override
                     public void allow(int reason) {
                         doExtraVerification(verifyCallback, true);
