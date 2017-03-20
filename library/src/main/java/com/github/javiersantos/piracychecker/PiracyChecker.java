@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
+import com.google.android.vending.licensing.Policy;
 import com.google.android.vending.licensing.ServerManagedPolicy;
 import com.github.javiersantos.piracychecker.activities.LicenseActivity;
 import com.github.javiersantos.piracychecker.enums.Display;
@@ -256,7 +257,7 @@ public class PiracyChecker {
 
                     @Override
                     public void dontAllow(int reason) {
-                        doExtraVerification(verifyCallback, false);
+                        doExtraVerification(verifyCallback, reason == Policy.RETRY);
                     }
 
                     @Override
