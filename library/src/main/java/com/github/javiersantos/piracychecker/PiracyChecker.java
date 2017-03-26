@@ -33,6 +33,7 @@ public class PiracyChecker {
 
     protected static final String LIBRARY_PREFERENCES_NAME = "license_check";
 
+    // Library configuration/customizations
     protected Context context;
     protected String unlicensedDialogTitle;
     protected String unlicensedDialogDescription;
@@ -55,6 +56,10 @@ public class PiracyChecker {
     protected String signature;
     protected List<InstallerID> installerIDs;
     protected PiracyCheckerCallback callback;
+
+    // LVL
+    protected LicenseChecker libraryLVLChecker;
+
 
     public PiracyChecker(Context context) {
         this(context, context.getString(R.string.app_unlicensed), context.getString(R.string.app_unlicensed_description));
@@ -200,6 +205,12 @@ public class PiracyChecker {
         return this;
     }
 
+    public void destroy() {
+        if (libraryLVLChecker != null) {
+            libraryLVLChecker.onDestroy();
+        }
+    }
+
     public void start() {
         if (callback != null) {
             verify(callback);
@@ -211,6 +222,10 @@ public class PiracyChecker {
 
                 @Override
                 public void dontAllow(@NonNull PiracyCheckerError error, @Nullable PirateApp app) {
+                    if (context instanceof Activity && ((Activity) context).isFinishing()) {
+                        return;
+                    }
+
                     String dialogContent = unlicensedDialogDescription;
                     if (app != null)
                         dialogContent = context.getString(R.string.unauthorized_app_found, app.getName());
@@ -246,10 +261,10 @@ public class PiracyChecker {
             if (enableLVL) {
                 String deviceId = Settings.Secure.getString(context.getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                LicenseChecker libraryChecker = new LicenseChecker(context, new
+                libraryLVLChecker = new LicenseChecker(context, new
                         ServerManagedPolicy(context, new AESObfuscator(LibraryUtils.SALT, context
                         .getPackageName(), deviceId)), licenseBase64);
-                libraryChecker.checkAccess(new LicenseCheckerCallback() {
+                libraryLVLChecker.checkAccess(new LicenseCheckerCallback() {
                     @Override
                     public void allow(int reason) {
                         doExtraVerification(verifyCallback, true);
